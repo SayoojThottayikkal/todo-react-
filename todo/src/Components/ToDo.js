@@ -43,17 +43,41 @@ export default function ToDo() {
   useEffect(() => {
     setItemCount(completed.length + task.length);
   }, []);
+
+  const deleteTask = (id) => {
+    let new_list = task.filter((task) => task.id !== id);
+    setTask(new_list);
+  };
+
+  const deleteCompleted = (id) => {
+    let new_list = completed.filter((task) => task.id !== id);
+    setCompleted(new_list);
+  };
+  const completeTask = (id) => {
+    let current_task = task.find((task) => task.id == id);
+    setCompleted([...completed, current_task]);
+    let new_list = task.filter((task) => task.id !== id);
+    setTask(new_list);
+  };
+
+  const revertTask = (id) => {
+    let current_task = completed.find((task) => task.id == id);
+    setTask([...task, current_task]);
+    let new_list = completed.filter((task) => task.id !== id);
+    setCompleted(new_list);
+  };
+
   const renderTask = () => {
     return task.map((task) => (
       <ListItems>
-        <LeftContainer>
+        <LeftContainer onClick={() => completeTask(task.id)}>
           <CheckContainer></CheckContainer>
           <ItemText>
             {task.id}, {task.title}
           </ItemText>
         </LeftContainer>
         <RightContainer>
-          <DeleteButton>
+          <DeleteButton onClick={() => deleteTask(task.id)}>
             <ButtonImage
               src={require("./assets/images/delete.svg").default}
               alt="delete"
@@ -80,13 +104,13 @@ export default function ToDo() {
             </ItemTextCompleted>
           </LeftContainer>
           <RightContainer>
-            <DeleteButton>
+            <DeleteButton onClick={() => revertTask(task.id)}>
               <ButtonImage
                 src={require("./assets/images/revert.svg").default}
                 alt="revert"
               />
             </DeleteButton>
-            <DeleteButton>
+            <DeleteButton onClick={() => deleteCompleted(task.id)}>
               <ButtonImage
                 src={require("./assets/images/delete.svg").default}
                 alt="delete"
